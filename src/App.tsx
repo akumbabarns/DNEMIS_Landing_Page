@@ -1,5 +1,5 @@
 import './App.css'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface ModuleCardProps {
   title: string
@@ -20,6 +20,11 @@ interface IndicatorValue extends IndicatorDefinition {
 
 interface Dhis2AnalyticsResponse {
   rows?: string[][]
+}
+
+interface PeriodValue {
+  period: string
+  value: string
 }
 
 const ModuleCard = ({ title, subtitle, icon, href }: ModuleCardProps) => {
@@ -70,6 +75,16 @@ const defaultIndicatorDefinitions: IndicatorDefinition[] = [
 
 const fallbackIndicatorValues: string[] = ['82.4', '88.1', '74.9', '0.97', '69.3', '61.5']
 
+const configuredIndicatorIds = (import.meta.env.VITE_DHIS2_INDICATOR_IDS ?? '')
+  .split(',')
+  .map((id: string) => id.trim())
+  .filter(Boolean)
+
+const indicatorDefinitions: IndicatorDefinition[] = defaultIndicatorDefinitions.map((definition, index) => ({
+  ...definition,
+  id: configuredIndicatorIds[index] ?? definition.id,
+}))
+
 const createFallbackIndicators = (definitions: IndicatorDefinition[]): IndicatorValue[] => {
   return definitions.map((definition, index) => ({
     ...definition,
@@ -77,25 +92,32 @@ const createFallbackIndicators = (definitions: IndicatorDefinition[]): Indicator
   }))
 }
 
+const comparePeriods = (left: string, right: string): number => {
+  // DHIS2 analytics commonly returns monthly (YYYYMM) or yearly (YYYY) periods.
+  const monthRegex = /^\d{6}$/
+  const yearRegex = /^\d{4}$/
+
+  if (monthRegex.test(left) && monthRegex.test(right)) {
+    return Number(left) - Number(right)
+  }
+
+  if (yearRegex.test(left) && yearRegex.test(right)) {
+    return Number(left) - Number(right)
+  }
+
+  return left.localeCompare(right)
+}
+
 function App() {
-  const configuredIndicatorIds = (import.meta.env.VITE_DHIS2_INDICATOR_IDS ?? '')
-    .split(',')
-    .map((id: string) => id.trim())
-    .filter(Boolean)
-
-  const indicatorDefinitions = useMemo(() => {
-    return defaultIndicatorDefinitions.map((definition, index) => ({
-      ...definition,
-      id: configuredIndicatorIds[index] ?? definition.id,
-    }))
-  }, [configuredIndicatorIds])
-
   const [indicators, setIndicators] = useState<IndicatorValue[]>(createFallbackIndicators(indicatorDefinitions))
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isLiveData, setIsLiveData] = useState<boolean>(false)
 
   useEffect(() => {
     const dhis2BaseUrl = import.meta.env.VITE_DHIS2_BASE_URL?.trim()
+    const dhis2AuthToken = import.meta.env.VITE_DHIS2_AUTH_TOKEN?.trim()
+    const enableBasicAuth = import.meta.env.VITE_DHIS2_ENABLE_BASIC_AUTH === 'true'
+    const allowBasicAuth = enableBasicAuth && !import.meta.env.PROD
     const dhis2Username = import.meta.env.VITE_DHIS2_USERNAME?.trim()
     const dhis2Password = import.meta.env.VITE_DHIS2_PASSWORD?.trim()
     const fallbackIndicators = createFallbackIndicators(indicatorDefinitions)
@@ -116,8 +138,12 @@ function App() {
     query.append('displayProperty', 'NAME')
 
     const headers: HeadersInit = {}
-    if (dhis2Username && dhis2Password) {
+    if (dhis2AuthToken) {
+      headers.Authorization = `Bearer ${dhis2AuthToken}`
+    } else if (allowBasicAuth && dhis2Username && dhis2Password) {
       headers.Authorization = `Basic ${btoa(`${dhis2Username}:${dhis2Password}`)}`
+    } else if (enableBasicAuth && import.meta.env.PROD) {
+      console.warn('DHIS2 basic auth is disabled in production. Use a backend proxy or bearer token.')
     }
 
     let cancelled = false
@@ -135,23 +161,27 @@ function App() {
         }
 
         const data: Dhis2AnalyticsResponse = await response.json()
-        const valuesByIndicator = new Map<string, string>()
+        const valuesByIndicator = new Map<string, PeriodValue>()
 
         for (const row of data.rows ?? []) {
-          const [dx, period, , value] = row
-          if (!dx || !period || !value) {
+          if (row.length < 4) {
+            continue
+          }
+
+          const [dx, period, orgUnit, value] = row
+          if (dx == null || period == null || orgUnit == null || value == null) {
             continue
           }
 
           const current = valuesByIndicator.get(dx)
-          if (!current || period >= current.split('|')[0]) {
-            valuesByIndicator.set(dx, `${period}|${value}`)
+          if (!current || comparePeriods(period, current.period) > 0) {
+            valuesByIndicator.set(dx, { period, value })
           }
         }
 
         const liveIndicators = indicatorDefinitions.map((definition, index) => {
           const latest = valuesByIndicator.get(definition.id)
-          const value = latest ? latest.split('|')[1] : fallbackIndicatorValues[index] ?? 'N/A'
+          const value = latest?.value ?? fallbackIndicatorValues[index] ?? 'N/A'
           return { ...definition, value }
         })
 
@@ -176,7 +206,7 @@ function App() {
     return () => {
       cancelled = true
     }
-  }, [indicatorDefinitions])
+  }, [])
 
   return (
     <div className="app-container">
@@ -207,11 +237,11 @@ function App() {
       <section className="indicator-panel" aria-labelledby="indicator-panel-heading">
         <div className="indicator-panel-header">
           <h2 id="indicator-panel-heading">DHIS2 Key Indicators</h2>
-          <p>{isLoading ? 'Loading indicators…' : isLiveData ? 'Source: DHIS2 instance' : 'Source: Demo fallback data'}</p>
+          <p aria-live="polite">{isLoading ? 'Loading indicators…' : isLiveData ? 'Source: DHIS2 instance' : 'Source: Demo fallback data'}</p>
         </div>
         <div className="indicator-grid">
           {indicators.map((indicator) => (
-            <article key={indicator.label} className="indicator-card">
+            <article key={indicator.id} className="indicator-card">
               <p className="indicator-label">{indicator.label}</p>
               <p className="indicator-value">
                 {indicator.value}
