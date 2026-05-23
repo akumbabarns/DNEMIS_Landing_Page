@@ -1,5 +1,11 @@
 import './App.css'
 import { useEffect, useMemo, useState } from 'react'
+import {
+  DEFAULT_ANALYTICS_ORG_UNITS,
+  DEFAULT_ANALYTICS_PERIOD,
+  DEFAULT_DHIS2_BASE_URL,
+  DEFAULT_INDICATOR_IDS,
+} from './dhis2Config'
 
 interface ModuleCardProps {
   title: string
@@ -53,15 +59,6 @@ const modules = [
   },
 ]
 
-const DEFAULT_INDICATOR_IDS = [
-  'dh9fliYibms',
-  'S2cH9F1T7MU',
-  'jZtYw0T5xJl',
-  'stoCrMx0ED1',
-  'BWLfuuEdRZM',
-  'ERcw4yZuSSd',
-]
-
 const INDICATOR_FIELDS = 'id,displayName,description'
 
 const getConfiguredIndicatorIds = (): string[] => {
@@ -100,6 +97,8 @@ const createFallbackIndicator = (id: string): IndicatorData => ({
 
 function App() {
   const indicatorIds = useMemo<string[]>(() => getConfiguredIndicatorIds(), [])
+  const dhis2ProxyUrl = import.meta.env.VITE_DHIS2_PROXY_URL || '/dhis2'
+  const dhis2SourceUrl = import.meta.env.VITE_DHIS2_BASE_URL || DEFAULT_DHIS2_BASE_URL
   const [indicators, setIndicators] = useState<IndicatorData[]>(() =>
     indicatorIds.map((id) => ({
       id,
@@ -113,7 +112,7 @@ function App() {
   const [indicatorLoadError, setIndicatorLoadError] = useState<string | null>(null)
 
   useEffect(() => {
-    const proxyBaseUrl = (import.meta.env.VITE_DHIS2_PROXY_URL || '/dhis2').replace(/\/$/, '')
+    const proxyBaseUrl = dhis2ProxyUrl.replace(/\/$/, '')
     const abortController = new AbortController()
 
     const fetchIndicators = async () => {
@@ -130,7 +129,7 @@ function App() {
                   { signal: abortController.signal },
                 ),
                 fetch(
-                  `${proxyBaseUrl}/api/analytics.json?dimension=dx:${id}&dimension=pe:LAST_12_MONTHS&dimension=ou:USER_ORGUNIT;USER_ORGUNIT_CHILDREN&skipMeta=true`,
+                  `${proxyBaseUrl}/api/analytics.json?dimension=dx:${id}&dimension=pe:${DEFAULT_ANALYTICS_PERIOD}&dimension=ou:${DEFAULT_ANALYTICS_ORG_UNITS}&skipMeta=true`,
                   { signal: abortController.signal },
                 ),
               ])
@@ -159,7 +158,10 @@ function App() {
                 value,
                 hasError: false,
               } as IndicatorData
-            } catch {
+            } catch (error) {
+              if (import.meta.env.DEV) {
+                console.error(`Failed to load indicator ${id}`, error)
+              }
               return createFallbackIndicator(id)
             }
           }),
@@ -171,7 +173,10 @@ function App() {
         if (failedRequests) {
           setIndicatorLoadError('Some indicators could not be loaded. Check DHIS2 proxy configuration.')
         }
-      } catch {
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.error('Failed to load DHIS2 indicators', error)
+        }
         setIndicators(indicatorIds.map((id) => createFallbackIndicator(id)))
         setIndicatorLoadError('Unable to connect to DHIS2. Check DHIS2 proxy configuration.')
       } finally {
@@ -184,7 +189,7 @@ function App() {
     return () => {
       abortController.abort()
     }
-  }, [indicatorIds])
+  }, [dhis2ProxyUrl, indicatorIds])
 
   return (
     <div className="app-container">
@@ -216,7 +221,7 @@ function App() {
         <div className="indicators-panel-header">
           <h2>DHIS2 Key Indicators</h2>
           <p>
-            Source: {import.meta.env.VITE_DHIS2_BASE_URL || 'https://emistraining.dhis2nigeria.org.ng/semis'}
+            Source: {dhis2SourceUrl}
           </p>
         </div>
 

@@ -4,9 +4,9 @@
 
 This landing page includes a **DHIS2 Key Indicators** panel with exactly 6 indicator cards.
 
-- DHIS2 instance URL (user supplied): `https://emistraining.dhis2nigeria.org.ng/semis`
+- DHIS2 instance URL (user-supplied): `https://emistraining.dhis2nigeria.org.ng/semis`
 - Authentication method: Personal Access Token (PAT)
-- Indicator IDs (user supplied):
+- Indicator IDs (user-supplied):
   1. `dh9fliYibms`
   2. `S2cH9F1T7MU`
   3. `jZtYw0T5xJl`
