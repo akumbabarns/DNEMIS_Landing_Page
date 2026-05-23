@@ -42,7 +42,7 @@ Set these in `.env`:
 - `VITE_DHIS2_INDICATOR_IDS`: comma-separated list of exactly 6 DHIS2 indicator IDs
 - `VITE_DHIS2_INDICATOR_LABELS`: comma-separated labels for the 6 indicators
 - `VITE_DHIS2_INDICATOR_UNITS`: optional comma-separated units (for example `%`)
-- `VITE_DHIS2_ORG_UNIT`: defaults to `USER_ORGUNIT`
+- `VITE_DHIS2_ORG_UNIT`: defaults to `AoCaBHBeXTs`
 - `VITE_DHIS2_PERIOD`: defaults to `2024`
 - `VITE_DHIS2_USE_MOCK`: set `true` to force mock mode for demos
 - `VITE_DHIS2_CLASSROOMS_VISUALIZATION_ID`: defaults to `g93Kqdty25M`, used for the **No of Classrooms** card
