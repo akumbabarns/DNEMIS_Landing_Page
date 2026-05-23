@@ -42,7 +42,7 @@ Set these in `.env`:
 - `VITE_DHIS2_INDICATOR_LABELS`: comma-separated labels for the 6 indicators
 - `VITE_DHIS2_INDICATOR_UNITS`: optional comma-separated units (for example `%`)
 - `VITE_DHIS2_ORG_UNIT`: defaults to `USER_ORGUNIT`
-- `VITE_DHIS2_PERIOD`: defaults to `LAST_12_MONTHS`
+- `VITE_DHIS2_PERIOD`: defaults to `2024`
 - `VITE_DHIS2_USE_MOCK`: set `true` to force mock mode for demos
 
 ## Data Behavior

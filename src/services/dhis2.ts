@@ -127,7 +127,7 @@ const buildAnalyticsUrl = (definitions: IndicatorDefinition[]): string | null =>
 
   const cleanBase = baseUrl.replace(/\/$/, '')
   const orgUnit = import.meta.env.VITE_DHIS2_ORG_UNIT || 'USER_ORGUNIT'
-  const period = import.meta.env.VITE_DHIS2_PERIOD || 'LAST_12_MONTHS'
+  const period = import.meta.env.VITE_DHIS2_PERIOD || '2024'
 
   const url = new URL(`${cleanBase}/api/analytics.json`)
   url.searchParams.set('dimension', `dx:${definitions.map((item) => item.id).join(';')}`)
