@@ -18,21 +18,21 @@ export interface Dhis2PanelData {
 }
 
 const FALLBACK_INDICATORS: IndicatorDefinition[] = [
-  { id: 'enrollment_rate', label: 'Enrollment Rate', unit: '%' },
-  { id: 'attendance_rate', label: 'Attendance Rate', unit: '%' },
-  { id: 'completion_rate', label: 'Completion Rate', unit: '%' },
-  { id: 'teacher_attendance', label: 'Teacher Attendance', unit: '%' },
-  { id: 'girl_child_enrollment', label: 'Girl Child Enrollment', unit: '%' },
-  { id: 'safe_school_compliance', label: 'Safe School Compliance', unit: '%' },
+  { id: 'dh9fliYibms', label: 'Primary Schools' },
+  { id: 'S2cH9F1T7MU', label: 'JS Schools' },
+  { id: 'jZtYw0T5xJl', label: 'SS Schools' },
+  { id: 'stoCrMx0ED1', label: 'Sci & Tech Schools' },
+  { id: 'BWLfuuEdRZM', label: 'Total Number of Schools' },
+  { id: 'pending_indicator_6', label: 'Indicator 6 (Pending ID)' },
 ]
 
 const FALLBACK_MOCK_VALUES: Record<string, number> = {
-  enrollment_rate: 83.4,
-  attendance_rate: 78.6,
-  completion_rate: 71.2,
-  teacher_attendance: 86.3,
-  girl_child_enrollment: 80.1,
-  safe_school_compliance: 67.8,
+  dh9fliYibms: 18475,
+  S2cH9F1T7MU: 6352,
+  jZtYw0T5xJl: 4298,
+  stoCrMx0ED1: 1160,
+  BWLfuuEdRZM: 30285,
+  pending_indicator_6: 0,
 }
 
 const toNumber = (value: string): number => {

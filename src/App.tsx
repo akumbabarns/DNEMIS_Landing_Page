@@ -47,12 +47,12 @@ const modules = [
 ]
 
 const FALLBACK_PANEL: IndicatorValue[] = [
-  { id: 'enrollment_rate', label: 'Enrollment Rate', value: '--', unit: '%' },
-  { id: 'attendance_rate', label: 'Attendance Rate', value: '--', unit: '%' },
-  { id: 'completion_rate', label: 'Completion Rate', value: '--', unit: '%' },
-  { id: 'teacher_attendance', label: 'Teacher Attendance', value: '--', unit: '%' },
-  { id: 'girl_child_enrollment', label: 'Girl Child Enrollment', value: '--', unit: '%' },
-  { id: 'safe_school_compliance', label: 'Safe School Compliance', value: '--', unit: '%' },
+  { id: 'dh9fliYibms', label: 'Primary Schools', value: '--' },
+  { id: 'S2cH9F1T7MU', label: 'JS Schools', value: '--' },
+  { id: 'jZtYw0T5xJl', label: 'SS Schools', value: '--' },
+  { id: 'stoCrMx0ED1', label: 'Sci & Tech Schools', value: '--' },
+  { id: 'BWLfuuEdRZM', label: 'Total Number of Schools', value: '--' },
+  { id: 'pending_indicator_6', label: 'Indicator 6 (Pending ID)', value: '--' },
 ]
 
 function App() {
