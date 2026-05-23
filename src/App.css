@@ -1,5 +1,5 @@
 .app-container {
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
   position: relative;
   display: flex;
@@ -103,6 +103,95 @@
   font-weight: 500;
 }
 
+.indicator-panel {
+  width: 100%;
+  max-width: 980px;
+  position: relative;
+  z-index: 1;
+  margin-top: 0.5rem;
+  padding: 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(8px);
+}
+
+.indicator-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.indicator-title {
+  font-size: 1.2rem;
+  color: #1d2d44;
+}
+
+.indicator-subtitle {
+  font-size: 0.82rem;
+  margin-top: 0.2rem;
+  color: #4f6272;
+}
+
+.indicator-source {
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  white-space: nowrap;
+}
+
+.source-dhis2 {
+  background: rgba(20, 157, 87, 0.15);
+  color: #136f44;
+}
+
+.source-mock {
+  background: rgba(245, 158, 11, 0.18);
+  color: #9f5f00;
+}
+
+.indicator-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.indicator-card {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(79, 98, 114, 0.15);
+  padding: 0.85rem 0.75rem;
+  min-height: 92px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.indicator-label {
+  font-size: 0.8rem;
+  color: #334e68;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.indicator-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #102a43;
+  letter-spacing: 0.01em;
+}
+
+.indicator-footnote {
+  font-size: 0.72rem;
+  color: #486581;
+  margin-top: 0.7rem;
+  text-align: right;
+}
+
 .children-section {
   width: 100%;
   flex: 0 0 auto;
@@ -155,6 +244,15 @@
   .coat-of-arms {
     width: 90px;
   }
+
+  .indicator-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .indicator-panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 @media (max-width: 480px) {
@@ -172,5 +270,17 @@
 
   .coat-of-arms {
     width: 70px;
+  }
+
+  .indicator-panel {
+    padding: 0.85rem;
+  }
+
+  .indicator-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .indicator-value {
+    font-size: 1.2rem;
   }
 }
