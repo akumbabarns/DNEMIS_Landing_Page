@@ -22,7 +22,7 @@ const FALLBACK_INDICATORS: IndicatorDefinition[] = [
   { id: 'S2cH9F1T7MU', label: 'JS Schools' },
   { id: 'jZtYw0T5xJl', label: 'SS Schools' },
   { id: 'stoCrMx0ED1', label: 'Sci & Tech Schools' },
-  { id: 'BWLfuuEdRZM', label: 'Total Number of Schools' },
+  { id: 'mdiqac1t5DK', label: 'Total Number of Schools' },
   { id: 'ERcw4yZuSSd', label: 'Teachers in school' },
 ]
 
@@ -31,7 +31,7 @@ const FALLBACK_MOCK_VALUES: Record<string, number> = {
   S2cH9F1T7MU: 6352,
   jZtYw0T5xJl: 4298,
   stoCrMx0ED1: 1160,
-  BWLfuuEdRZM: 30285,
+  mdiqac1t5DK: 30285,
   ERcw4yZuSSd: 128944,
 }
 
