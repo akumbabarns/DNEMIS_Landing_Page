@@ -37,6 +37,7 @@ Set these in `.env`:
 
 - `VITE_DHIS2_BASE_URL`: DHIS2 base URL, for example `https://your-dhis2-instance.example.org`
 - `VITE_DHIS2_API_TOKEN`: Bearer token (recommended for browser usage)
+- `VITE_DHIS2_AUTH_MODE`: token mode, `bearer` (default) or `apiToken`
 - `VITE_DHIS2_USERNAME` and `VITE_DHIS2_PASSWORD`: optional basic auth fallback
 - `VITE_DHIS2_INDICATOR_IDS`: comma-separated list of exactly 6 DHIS2 indicator IDs
 - `VITE_DHIS2_INDICATOR_LABELS`: comma-separated labels for the 6 indicators
@@ -44,10 +45,12 @@ Set these in `.env`:
 - `VITE_DHIS2_ORG_UNIT`: defaults to `USER_ORGUNIT`
 - `VITE_DHIS2_PERIOD`: defaults to `2024`
 - `VITE_DHIS2_USE_MOCK`: set `true` to force mock mode for demos
+- `VITE_DHIS2_CLASSROOMS_VISUALIZATION_ID`: defaults to `g93Kqdty25M`, used for the **No of Classrooms** card
 
 ## Data Behavior
 
 - If DHIS2 settings are valid, the indicator panel requests `/api/analytics.json` from the configured DHIS2 instance.
+- The **No of Classrooms** card is enriched from DHIS2 Data Visualizer using `/api/visualizations/{id}/data.json`.
 - If configuration is missing or request fails, the panel automatically falls back to mock data.
 - The panel displays a source badge:
   - `Live DHIS2` when live data is loaded.

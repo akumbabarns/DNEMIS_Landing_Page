@@ -17,6 +17,9 @@ export interface Dhis2PanelData {
   updatedAt: string
 }
 
+const CLASSROOMS_INDICATOR_ID = 'qoiU4awdpxQ'
+const CLASSROOMS_VISUALIZATION_ID_DEFAULT = 'g93Kqdty25M'
+
 const FALLBACK_INDICATORS: IndicatorDefinition[] = [
   { id: 'MLTLNUmvS8r', label: 'Primary Schools' },
   { id: 'S2cH9F1T7MU', label: 'JS Schools' },
@@ -100,22 +103,38 @@ const createMockData = (definitions: IndicatorDefinition[]): Dhis2PanelData => (
   updatedAt: new Date().toISOString(),
 })
 
-const getHeaders = (): HeadersInit => {
+const getHeaders = (authMode: 'auto' | 'bearer' | 'apiToken' = 'auto'): HeadersInit => {
   const token = import.meta.env.VITE_DHIS2_API_TOKEN
   const username = import.meta.env.VITE_DHIS2_USERNAME
   const password = import.meta.env.VITE_DHIS2_PASSWORD
+  const configuredMode = import.meta.env.VITE_DHIS2_AUTH_MODE
 
   const headers: HeadersInit = {
     Accept: 'application/json',
   }
 
   if (token) {
-    headers.Authorization = `Bearer ${token}`
+    const mode = authMode === 'auto' ? configuredMode || 'bearer' : authMode
+    headers.Authorization = mode === 'apiToken' ? `ApiToken ${token}` : `Bearer ${token}`
   } else if (username && password) {
     headers.Authorization = `Basic ${btoa(`${username}:${password}`)}`
   }
 
   return headers
+}
+
+const buildClassroomsVisualizationUrl = (): string | null => {
+  const baseUrl = import.meta.env.VITE_DHIS2_BASE_URL?.trim()
+
+  if (!baseUrl) {
+    return null
+  }
+
+  const cleanBase = baseUrl.replace(/\/$/, '')
+  const visualizationId =
+    import.meta.env.VITE_DHIS2_CLASSROOMS_VISUALIZATION_ID || CLASSROOMS_VISUALIZATION_ID_DEFAULT
+
+  return `${cleanBase}/api/visualizations/${visualizationId}/data.json`
 }
 
 const buildAnalyticsUrl = (definitions: IndicatorDefinition[]): string | null => {
@@ -141,6 +160,64 @@ interface AnalyticsResponse {
   rows?: string[][]
   metaData?: {
     items?: Record<string, { name?: string }>
+  }
+}
+
+interface VisualizationResponse {
+  rows?: string[][]
+}
+
+const extractNumericTotal = (rows: string[][]): number =>
+  rows.reduce((total, row) => total + toNumber(row[row.length - 1]), 0)
+
+const tryFetchVisualizationData = async (url: string): Promise<VisualizationResponse | null> => {
+  const authModes: Array<'auto' | 'apiToken' | 'bearer'> = ['auto', 'apiToken', 'bearer']
+
+  for (const mode of authModes) {
+    const response = await fetch(url, {
+      headers: getHeaders(mode),
+    })
+
+    if (!response.ok) {
+      continue
+    }
+
+    return (await response.json()) as VisualizationResponse
+  }
+
+  return null
+}
+
+const mergeClassroomsFromVisualization = async (
+  indicators: IndicatorValue[],
+): Promise<IndicatorValue[]> => {
+  const visualizationUrl = buildClassroomsVisualizationUrl()
+
+  if (!visualizationUrl) {
+    return indicators
+  }
+
+  try {
+    const data = await tryFetchVisualizationData(visualizationUrl)
+
+    if (!data?.rows?.length) {
+      return indicators
+    }
+
+    const classroomsTotal = extractNumericTotal(data.rows)
+
+    return indicators.map((item) => {
+      if (item.id !== CLASSROOMS_INDICATOR_ID) {
+        return item
+      }
+
+      return {
+        ...item,
+        value: formatIndicatorValue(classroomsTotal, item.unit),
+      }
+    })
+  } catch {
+    return indicators
   }
 }
 
@@ -198,9 +275,11 @@ export const getDhis2IndicatorPanelData = async (): Promise<Dhis2PanelData> => {
     }
 
     const payload = (await response.json()) as AnalyticsResponse
+    const analyticsIndicators = parseAnalytics(payload, definitions)
+    const mergedIndicators = await mergeClassroomsFromVisualization(analyticsIndicators)
 
     return {
-      indicators: parseAnalytics(payload, definitions),
+      indicators: mergedIndicators,
       source: 'dhis2',
       updatedAt: new Date().toISOString(),
     }
