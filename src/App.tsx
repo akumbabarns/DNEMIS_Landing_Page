@@ -52,7 +52,7 @@ const FALLBACK_PANEL: IndicatorValue[] = [
   { id: 'jZtYw0T5xJl', label: 'SS Schools', value: '--' },
   { id: 'stoCrMx0ED1', label: 'Sci & Tech Schools', value: '--' },
   { id: 'BWLfuuEdRZM', label: 'Total Number of Schools', value: '--' },
-  { id: 'pending_indicator_6', label: 'Indicator 6 (Pending ID)', value: '--' },
+  { id: 'ERcw4yZuSSd', label: 'Teachers in school', value: '--' },
 ]
 
 function App() {

@@ -23,7 +23,7 @@ const FALLBACK_INDICATORS: IndicatorDefinition[] = [
   { id: 'jZtYw0T5xJl', label: 'SS Schools' },
   { id: 'stoCrMx0ED1', label: 'Sci & Tech Schools' },
   { id: 'BWLfuuEdRZM', label: 'Total Number of Schools' },
-  { id: 'pending_indicator_6', label: 'Indicator 6 (Pending ID)' },
+  { id: 'ERcw4yZuSSd', label: 'Teachers in school' },
 ]
 
 const FALLBACK_MOCK_VALUES: Record<string, number> = {
@@ -32,7 +32,7 @@ const FALLBACK_MOCK_VALUES: Record<string, number> = {
   jZtYw0T5xJl: 4298,
   stoCrMx0ED1: 1160,
   BWLfuuEdRZM: 30285,
-  pending_indicator_6: 0,
+  ERcw4yZuSSd: 128944,
 }
 
 const toNumber = (value: string): number => {
