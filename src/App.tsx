@@ -51,7 +51,7 @@ const FALLBACK_PANEL: IndicatorValue[] = [
   { id: 'S2cH9F1T7MU', label: 'JS Schools', value: '--' },
   { id: 'jZtYw0T5xJl', label: 'SS Schools', value: '--' },
   { id: 'stoCrMx0ED1', label: 'Sci & Tech Schools', value: '--' },
-  { id: 'mdiqac1t5DK', label: 'Total Number of Schools', value: '--' },
+  { id: 'qoiU4awdpxQ', label: 'No of Classrooms', value: '--' },
   { id: 'ERcw4yZuSSd', label: 'Teachers in school', value: '--' },
 ]
 
