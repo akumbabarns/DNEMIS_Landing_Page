@@ -101,41 +101,40 @@ function App() {
         <p className="main-subtitle">Enhancing Education for a Brighter Future</p>
       </header>
 
-      <div className="modules-grid">
-        {modules.map((module, index) => (
-          <ModuleCard
-            key={index}
-            title={module.title}
-            subtitle={module.subtitle}
-            icon={module.icon}
-            href={module.href}
-          />
-        ))}
-      </div>
-
-      <section className="indicator-panel" aria-labelledby="indicator-panel-title">
-        <div className="indicator-panel-header">
-          <div>
-            <h2 id="indicator-panel-title" className="indicator-title">Key Indicators</h2>
-            <p className="indicator-subtitle">Six priority metrics from the DHIS2 education dataset</p>
+        <div className="content-layout">
+          <section className="indicator-panel" aria-labelledby="indicator-panel-title">
+            <div className="indicator-panel-header">
+              <div>
+                <h2 id="indicator-panel-title" className="indicator-title">Key Indicators</h2>
+                <p className="indicator-subtitle">Six priority metrics from the DHIS2 education dataset</p>
+              </div>
+              <div className={`indicator-source source-${dataSource}`}>
+                {isLoading ? 'Loading...' : dataSource === 'dhis2' ? 'Live DHIS2' : 'Demo Data'}
+              </div>
+            </div>
+            <div className="indicator-grid">
+              {indicators.map((indicator) => (
+                <article key={indicator.id} className="indicator-card">
+                  <p className="indicator-label">{indicator.label}</p>
+                  <p className="indicator-value">{isLoading ? '...' : indicator.value}</p>
+                </article>
+              ))}
+            </div>
+            <p className="indicator-footnote">Last updated: {lastUpdated}</p>
+          </section>
+          <div className="modules-grid">
+            {modules.map((module, index) => (
+              <ModuleCard
+                key={index}
+                title={module.title}
+                subtitle={module.subtitle}
+                icon={module.icon}
+                href={module.href}
+              />
+            ))}
           </div>
-          <div className={`indicator-source source-${dataSource}`}>
-            {isLoading ? 'Loading...' : dataSource === 'dhis2' ? 'Live DHIS2' : 'Demo Data'}
           </div>
         </div>
-
-        <div className="indicator-grid">
-          {indicators.map((indicator) => (
-            <article key={indicator.id} className="indicator-card">
-              <p className="indicator-label">{indicator.label}</p>
-              <p className="indicator-value">{isLoading ? '...' : indicator.value}</p>
-            </article>
-          ))}
-        </div>
-
-        <p className="indicator-footnote">Last updated: {lastUpdated}</p>
-      </section>
-    </div>
   )
 }
 
