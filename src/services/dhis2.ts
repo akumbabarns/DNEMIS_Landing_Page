@@ -18,7 +18,7 @@ export interface Dhis2PanelData {
 }
 
 const FALLBACK_INDICATORS: IndicatorDefinition[] = [
-  { id: 'dh9fliYibms', label: 'Primary Schools' },
+  { id: 'MLTLNUmvS8r', label: 'Primary Schools' },
   { id: 'S2cH9F1T7MU', label: 'JS Schools' },
   { id: 'jZtYw0T5xJl', label: 'SS Schools' },
   { id: 'stoCrMx0ED1', label: 'Sci & Tech Schools' },
@@ -27,7 +27,7 @@ const FALLBACK_INDICATORS: IndicatorDefinition[] = [
 ]
 
 const FALLBACK_MOCK_VALUES: Record<string, number> = {
-  dh9fliYibms: 18475,
+  MLTLNUmvS8r: 18475,
   S2cH9F1T7MU: 6352,
   jZtYw0T5xJl: 4298,
   stoCrMx0ED1: 1160,

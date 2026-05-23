@@ -47,7 +47,7 @@ const modules = [
 ]
 
 const FALLBACK_PANEL: IndicatorValue[] = [
-  { id: 'dh9fliYibms', label: 'Primary Schools', value: '--' },
+  { id: 'MLTLNUmvS8r', label: 'Primary Schools', value: '--' },
   { id: 'S2cH9F1T7MU', label: 'JS Schools', value: '--' },
   { id: 'jZtYw0T5xJl', label: 'SS Schools', value: '--' },
   { id: 'stoCrMx0ED1', label: 'Sci & Tech Schools', value: '--' },
