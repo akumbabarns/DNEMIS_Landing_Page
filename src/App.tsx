@@ -1,4 +1,6 @@
+import { useEffect, useMemo, useState } from 'react'
 import './App.css'
+import { getDhis2IndicatorPanelData, type IndicatorValue } from './services/dhis2'
 
 interface ModuleCardProps {
   title: string
@@ -44,7 +46,47 @@ const modules = [
   },
 ]
 
+const FALLBACK_PANEL: IndicatorValue[] = [
+  { id: 'MLTLNUmvS8r', label: 'Primary Schools', value: '--' },
+  { id: 'S2cH9F1T7MU', label: 'JS Schools', value: '--' },
+  { id: 'jZtYw0T5xJl', label: 'SS Schools', value: '--' },
+  { id: 'stoCrMx0ED1', label: 'Sci & Tech Schools', value: '--' },
+  { id: 'qoiU4awdpxQ', label: 'No of Classrooms', value: '--' },
+  { id: 'ERcw4yZuSSd', label: 'Teachers in school', value: '--' },
+]
+
 function App() {
+  const [indicators, setIndicators] = useState<IndicatorValue[]>(FALLBACK_PANEL)
+  const [isLoading, setIsLoading] = useState(true)
+  const [dataSource, setDataSource] = useState<'dhis2' | 'mock'>('mock')
+  const [updatedAt, setUpdatedAt] = useState<string>('')
+
+  useEffect(() => {
+    const loadIndicators = async () => {
+      setIsLoading(true)
+      const panelData = await getDhis2IndicatorPanelData()
+      setIndicators(panelData.indicators.slice(0, 6))
+      setDataSource(panelData.source)
+      setUpdatedAt(panelData.updatedAt)
+      setIsLoading(false)
+    }
+
+    loadIndicators()
+  }, [])
+
+  const lastUpdated = useMemo(() => {
+    if (!updatedAt) {
+      return 'N/A'
+    }
+
+    return new Date(updatedAt).toLocaleString('en-NG', {
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }, [updatedAt])
+
   return (
     <div className="app-container">
       <div className="background-overlay"></div>
@@ -59,18 +101,40 @@ function App() {
         <p className="main-subtitle">Enhancing Education for a Brighter Future</p>
       </header>
 
-      <div className="modules-grid">
-        {modules.map((module, index) => (
-          <ModuleCard
-            key={index}
-            title={module.title}
-            subtitle={module.subtitle}
-            icon={module.icon}
-            href={module.href}
-          />
-        ))}
-      </div>
-    </div>
+        <div className="content-layout">
+          <section className="indicator-panel" aria-labelledby="indicator-panel-title">
+            <div className="indicator-panel-header">
+              <div>
+                <h2 id="indicator-panel-title" className="indicator-title">Key Indicators</h2>
+                <p className="indicator-subtitle">Six priority metrics from the DHIS2 education dataset</p>
+              </div>
+              <div className={`indicator-source source-${dataSource}`}>
+                {isLoading ? 'Loading...' : dataSource === 'dhis2' ? 'Live DHIS2' : 'Demo Data'}
+              </div>
+            </div>
+            <div className="indicator-grid">
+              {indicators.map((indicator) => (
+                <article key={indicator.id} className="indicator-card">
+                  <p className="indicator-label">{indicator.label}</p>
+                  <p className="indicator-value">{isLoading ? '...' : indicator.value}</p>
+                </article>
+              ))}
+            </div>
+            <p className="indicator-footnote">Last updated: {lastUpdated}</p>
+          </section>
+          <div className="modules-grid">
+            {modules.map((module, index) => (
+              <ModuleCard
+                key={index}
+                title={module.title}
+                subtitle={module.subtitle}
+                icon={module.icon}
+                href={module.href}
+              />
+            ))}
+          </div>
+          </div>
+        </div>
   )
 }
 
